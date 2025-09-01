@@ -103,13 +103,14 @@ const IntegrationCard = ({
 };
 
 export default function Index() {
-  const { userName } = useAppStore();
+  const { userName, accessToken } = useAppStore();
   const [integrations, setIntegrations] = useState({
     github: false,
     eas: false,
     jenkins: false,
   });
 
+  console.log(accessToken);
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
 
