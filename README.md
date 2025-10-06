@@ -1,50 +1,113 @@
-# Welcome to your Expo app 👋
+# Automation Atlas
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile application for generating and managing webhook endpoints that deliver real-time project status notifications directly to your device.
 
-## Get started
+## Overview
 
-1. Install dependencies
+This Expo-based application enables seamless integration of webhook notifications into your CI/CD pipelines and YAML configurations. Receive instant mobile notifications for build statuses, deployments, and project updates.
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **Framework**: Expo (React Native)
+- **Authentication**: Auth0
+- **State Management**: Zustand
+- **Push Notifications**: Expo Notifications
 
-   ```bash
-    npx expo start
-   ```
+## Prerequisites
 
-In the output, you'll find options to open the app in a
+- Node.js 16+
+- Expo CLI
+- Auth0 account with configured application
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Installation
 
 ```bash
-npm run reset-project
+# Clone repository
+git clone <repository-url>
+cd webhook-notification-app
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+cp .env.example .env
+
+# Start development server
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Environment Configuration
 
-## Learn more
+Create a `.env` file with the following variables:
 
-To learn more about developing your project with Expo, look at the following resources:
+```env
+EXPO_PUBLIC_API_URL=https://api.your-backend.com
+EXPO_PUBLIC_AUTH0_DOMAIN=your-domain.auth0.com
+EXPO_PUBLIC_AUTH0_CLIENT_ID=your-client-id
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## YAML Integration
 
-## Join the community
+Integrate generated webhooks into your configuration files:
 
-Join our community of developers creating universal apps.
+```yaml
+notifications:
+  webhook:
+    - url: https://api.your-app.com/webhook/abc123xyz
+      events: [success, failure]
+      
+# GitHub Actions Example
+- name: Send Notification
+  run: |
+    curl -X POST ${{ secrets.WEBHOOK_URL }} \
+      -H "Content-Type: application/json" \
+      -d '{"status": "${{ job.status }}", "project": "app-name"}'
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Webhook Payload
+
+```json
+{
+  "status": "success|failure|pending",
+  "project": "string",
+  "message": "string",
+  "timestamp": "ISO8601",
+  "metadata": {}
+}
+```
+
+## Development
+
+```bash
+npm start          # Start Expo dev server
+npm run android    # Run on Android
+npm run ios        # Run on iOS
+npm run lint       # Lint codebase
+```
+
+## Building
+
+```bash
+# Production builds
+eas build --platform android
+eas build --platform ios
+```
+
+## Authentication Flow
+
+The app uses Auth0 for secure authentication:
+
+1. Users authenticate via Auth0 Universal Login
+2. JWT tokens are managed by Secure store
+3. All API requests include authentication headers
+4. Token refresh handled automatically
+
+
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Support
+
+For issues and feature requests, please open a GitHub issue.
